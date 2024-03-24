@@ -24,16 +24,16 @@ func Open(filename string, flags int32) int {
 	return 0
 }
 
-// generate a test suite
+// generate a test suite form path, flags and optional mode
 // path == (
 // 	nil,
 //	a path to nowhere,
 //	one to a readable file,
 //	an unreadable file or directory in the path
-// an unwritable file or dir
-// a symlink loop
-// path argument exceeds {PATH_MAX} or a pathname component is longer than {NAME_MAX}.
-// path contains a non-directory
+//  an unwritable file or dir
+//  a symlink loop
+//  path argument exceeds {PATH_MAX} or a pathname component is longer than {NAME_MAX}.
+//  path contains a non-directory
 // )
 // flags == (
 // 64-bit int has 8 bytes, we use 7
@@ -41,7 +41,7 @@ func Open(filename string, flags int32) int {
 // O_RDONLY             00
 // O_WRONLY             01
 // O_RDWR               02
-// O_ACCMODE            03
+// O_ACCMODE            03 this is a mask for two bits
 
 // third byte, octal  3
 // O_CREAT           0100
@@ -81,9 +81,16 @@ func Open(filename string, flags int32) int {
 
 //
 // mode == (S_IRWXU  and friends,
-// S_IREAD        0400    /* Read by owner.  */
+// S_IREAD        0400    /* Read by owner. */
 // S_IWRITE       0200    /* Write by owner.  */
 // S_IEXEC        0100    /* Execute by owner.  */
+// extends to S_IRGRP | S_IROTH
+// S_IRGRP         040    /* Read by group.  */
+// S_IWRGRP        020    /* Write by group.  */
+// S_IEXGRP        010    /* Execute by group.  */
+// S_IROTH          04    /* Read by other.     0b100 */
+// S_IWROT          02    /* Write by other.    0b010 */
+// S_IEXOT          01    /* Execute by other.  0b001 */
 // // and then
 // S_ISUID       04000   /* Set user ID on execution.  */
 // S_ISGID       02000   /* Set group ID on execution.  */
